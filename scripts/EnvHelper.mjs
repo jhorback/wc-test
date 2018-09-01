@@ -1,6 +1,12 @@
 
 
-
+/*
+ * env: {
+ *  isDevServer: boolean,
+ *  mode: string, // "production", "development"
+ *  target: string, // "chrome", "ie", "modern"
+ * }
+ */
 export class EnvHelper {
     constructor(env) {
         this.env = env;
@@ -84,6 +90,7 @@ function getBaseScripts(envh) {
             "babel-polyfill",
             "./src/WebComponentsRoot.js",
             "./tmp/webcomponents-loader.js"
+            //"./node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"
             //"./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"
         ];
     } else if (envh.isModern) {

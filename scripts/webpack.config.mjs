@@ -1,8 +1,6 @@
 import path from "path";
-import { EnvHelper } from "./scripts/EnvHelper.mjs";
-import CopyWebpackPlugin from "copy-webpack-plugin";
-import HtmlWebpackPlugin from "html-webpack-plugin";
-import CleanWebpackPlugin from "clean-webpack-plugin";
+import { EnvHelper } from "./EnvHelper.mjs";
+import plugins from "./webpack.plugins.js";
 
 /*
 Environment flags:
@@ -28,7 +26,7 @@ export default (env = {}) => {
     
     output: {
       filename: "[name].bundle.js?[hash]", // could put hash here
-      path: path.resolve(__dirname, envh.targetBuildDir),
+      path: resolvePath(envh.targetBuildDir),
       publicPath: "/"
     },
     
@@ -40,7 +38,7 @@ export default (env = {}) => {
     // },
     
     resolve: {
-      modules: [path.resolve(__dirname, "node_modules")]
+      modules: [resolvePath("node_modules")]
     },
     
     module: {
@@ -78,20 +76,20 @@ export default (env = {}) => {
     },
 
     plugins: [
-      new CleanWebpackPlugin([envh.targetBuildDir]),
+      plugins.cleanWebpackPlugin([envh.targetBuildDir]),
       // new HtmlWebpackPlugin({
       //   template: path.resolve(__dirname, "src/index.html"),
       //   filename: path.resolve(__dirname,  `${targetBuildDir}index.html`),
       //   inject: false,
       //   hash: true
       // }),
-      new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, "./src/index.html"),
-        filename: path.resolve(__dirname,  `${envh.targetBuildDir}index.html`),
+      plugins.htmlWebpackPlugin({
+        template: resolvePath("./src/index.html"),
+        filename: resolvePath(`${envh.targetBuildDir}index.html`),
         chunks: ["app"]
       }),
-      new CopyWebpackPlugin([{
-        from: path.resolve(__dirname,
+      plugins.copyWebpackPlugin([{
+        from: resolvePath(
           "node_modules/@webcomponents/webcomponentsjs/**/*"
         ),
         //to: "node_modules/@webcomponents/webcomponentsjs/"
@@ -103,6 +101,11 @@ export default (env = {}) => {
     ]
   };
 
-  console.log(config);
   return config;
 };
+
+
+function resolvePath(pathToResolve) {
+  const dirName = path.resolve();
+  return path.resolve(dirName,  pathToResolve);
+}

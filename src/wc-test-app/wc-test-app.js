@@ -21,7 +21,7 @@ class WcTestApp extends LitElement {
         example3Text
     }) {
         return html`
-            Hello WC-TEST foo bar baz bam new one
+            Hello WC-TEST ! OH YEAH.
         `;
     }
 }
