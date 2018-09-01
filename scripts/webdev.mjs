@@ -1,6 +1,6 @@
+import "colors";
 import webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
-import "colors";
 import progress from 'progress-webpack-plugin';
 import { EnvHelper } from './EnvHelper.mjs';
 import webpackConfig from "./webpack.config.mjs";
@@ -37,7 +37,24 @@ class CommandExecutor {
   }
 
   addHelpCommand() {
-
+    this.addCommand("help", {
+      help: "Shows this help message",
+      execute: (env) => {
+        console.log("\nAvailable Commands\n".bold);
+        Object.keys(this.commands).forEach((key) => {
+          const command = this.commands[key];
+          const label = `\t${command.name}\t\t`.bold;
+          console.log(`${label} ${command.help}`);
+        });
+        console.log("\nOptions\n".bold);
+        Object.keys(this.options).forEach((key) => {
+          const option = this.options[key];
+          const label = `\t${option.flag ? `-${option.flag}, ` : ""}--${option.name}\t\t`.bold;
+          console.log(`${label} ${option.help}`);
+        });
+        console.log("\n");
+      }
+    });
   }
 
   addOption(name, {
@@ -77,7 +94,8 @@ class CommandExecutor {
       }
     });
 
-    beforeExecute && beforeExecute(this.env);
+    beforeExecute &&
+      beforeExecute(commandName, this.env);
     command.execute(this.env);
   }
 }
@@ -88,7 +106,7 @@ const executor = new CommandExecutor({target: "chrome"});
 executor.addHelpCommand();
 
 executor.addCommand("build", {
-  help: "",
+  help: "Builds the application for chrome in production mode",
   execute: (env) => {
     const compiler = getCompiler(env);
     compiler.run((err, stats) => {
@@ -109,7 +127,7 @@ executor.addCommand("build", {
 });
 
 executor.addCommand("serve", {
-  help: "",
+  help: "Starts the dev server for chrome in development mode",
 
   updateEnv: (env) => {
     env.isDevServer = true;
@@ -146,7 +164,7 @@ executor.addCommand("serve", {
 
 executor.addOption("dev", {
   flag: "d",
-  help: "",
+  help: "Set the mode to development",
   updateEnv: (env) => {
     env.mode = "development";
   }
@@ -154,7 +172,7 @@ executor.addOption("dev", {
 
 executor.addOption("prod", {
   flag: "p",
-  help: "",
+  help: "Set the mode to production",
   updateEnv: (env) => {
     env.mode = "production";
   }
@@ -162,7 +180,7 @@ executor.addOption("prod", {
 
 executor.addOption("verbose", {
   flag: "v",
-  help: "",
+  help: "Turn on vebose debugging output",
   defaultValue: false,
   updateEnv: (env) => {
     env.verbose = true;
@@ -170,27 +188,33 @@ executor.addOption("verbose", {
 });
 
 executor.addOption("ie", {
-  help: "",
+  help: "Set the target broswer to ie",
   updateEnv: (env) => {
     env.target = "ie";
   }
 });
 
 executor.addOption("chrome", {
-  help: "",
+  help: "Set the target browser to chrome",
   updateEnv: (env) => {
     env.target = "chrome";
   }
 });
 
 executor.addOption("modern", {
-  help: "",
+  help: "Set the target browser to modern browsers (e.g. firefox, safari, etc.)",
   updateEnv: (env) => {
     env.target = "modern";
   }
 });
 
-executor.execute((env) => {
+executor.execute((commandName, env) => {
+
+  if (commandName === "help") {
+    console.log("\nAi webdev".bold);
+    return;
+  } 
+
   const envh = new EnvHelper(env);
   console.log(envh.description.green);
   if (env.verbose) {
@@ -202,6 +226,7 @@ executor.execute((env) => {
   }
 });
 
+
 function alphaNumericSort (a, b) {
   if (a === b) {
       return 0;
@@ -211,8 +236,6 @@ function alphaNumericSort (a, b) {
   }
   return typeof a < typeof b ? -1 : 1;
 }
-
-
 
 
 function getCompiler(args, config) {
