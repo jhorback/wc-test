@@ -2,110 +2,15 @@ import "colors";
 import webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
 import progress from 'progress-webpack-plugin';
+import { CommandExecutor } from './CommandExecutor.mjs';
 import { EnvHelper } from './EnvHelper.mjs';
-import webpackConfig from "./webpack.config.mjs";
+import webpackConfig from './webpack.config.mjs';
 
 
+const program = new CommandExecutor({target: "chrome"});
+program.addHelpCommand();
 
-/**
- * Flags:
- *  command (first argument)
- *    serve
- *    build
- *    help
- *  mode
- *    --dev, -d
- *    --prod, -p
- *  target
- *    --ie
- *    --modern
- *    --chrome
- */
-
-class CommandExecutor {
-  constructor(defaultEnv) {
-    this.commands = {};
-    this.options = {};
-    this.flags = {};
-    this.env = defaultEnv || {};
-    this.env._ = [];
-  }
-
-  addCommand(name, {help, execute, updateEnv = null}) {
-    const command = {name, updateEnv, execute, help};
-    this.commands[name] = command;
-  }
-
-  addHelpCommand() {
-    this.addCommand("help", {
-      help: "Shows this help message",
-      execute: (env) => {
-        console.log("\nAvailable Commands\n".bold);
-        Object.keys(this.commands).forEach((key) => {
-          const command = this.commands[key];
-          const label = `\t${command.name}\t\t`.bold;
-          console.log(`${label} ${command.help}`);
-        });
-        console.log("\nOptions\n".bold);
-        Object.keys(this.options).forEach((key) => {
-          const option = this.options[key];
-          const label = `\t${option.flag ? `-${option.flag}, ` : ""}--${option.name}\t\t`.bold;
-          console.log(`${label} ${option.help}`);
-        });
-        console.log("\n");
-      }
-    });
-  }
-
-  addOption(name, {
-      help,
-      flag = null,
-      defaultValue = null,
-      updateEnv
-    }) {
-    const option = {flag, name, updateEnv, defaultValue, help};
-    
-    this.options[`--${name}`] = option;
-
-    if (flag) {
-      this.flags[`-${flag}`] = option;
-    }
-
-    if (defaultValue) {
-      this.env[name] = defaultValue;
-    }
-  }
-
-  execute(beforeExecute) {
-    const [,, commandName, ...args] = process.argv;
-    const command = this.commands[commandName];
-
-    if (!command) {
-      console.log(`webdev command ${commandName} is not supported`.red);
-    }
-    
-    command.updateEnv && command.updateEnv(this.env);
-    args.forEach((arg) => {
-      const option = this.options[arg] || this.flags[arg];
-      if (option && option.updateEnv) {
-        option.updateEnv(this.env);
-      } else {
-        this.env._.push(option);
-      }
-    });
-
-    beforeExecute &&
-      beforeExecute(commandName, this.env);
-    command.execute(this.env);
-  }
-}
-
-
-
-const executor = new CommandExecutor({target: "chrome"});
-executor.addHelpCommand();
-
-executor.addCommand("build", {
+program.addCommand("build", {
   help: "Builds the application for chrome in production mode",
   execute: (env) => {
     const compiler = getCompiler(env);
@@ -126,7 +31,7 @@ executor.addCommand("build", {
   }
 });
 
-executor.addCommand("serve", {
+program.addCommand("serve", {
   help: "Starts the dev server for chrome in development mode",
 
   updateEnv: (env) => {
@@ -162,7 +67,7 @@ executor.addCommand("serve", {
   }
 })
 
-executor.addOption("dev", {
+program.addOption("dev", {
   flag: "d",
   help: "Set the mode to development",
   updateEnv: (env) => {
@@ -170,7 +75,7 @@ executor.addOption("dev", {
   }
 });
 
-executor.addOption("prod", {
+program.addOption("prod", {
   flag: "p",
   help: "Set the mode to production",
   updateEnv: (env) => {
@@ -178,7 +83,7 @@ executor.addOption("prod", {
   }
 });
 
-executor.addOption("verbose", {
+program.addOption("verbose", {
   flag: "v",
   help: "Turn on vebose debugging output",
   defaultValue: false,
@@ -187,28 +92,28 @@ executor.addOption("verbose", {
   }
 });
 
-executor.addOption("ie", {
+program.addOption("ie", {
   help: "Set the target broswer to ie",
   updateEnv: (env) => {
     env.target = "ie";
   }
 });
 
-executor.addOption("chrome", {
+program.addOption("chrome", {
   help: "Set the target browser to chrome",
   updateEnv: (env) => {
     env.target = "chrome";
   }
 });
 
-executor.addOption("modern", {
+program.addOption("modern", {
   help: "Set the target browser to modern browsers (e.g. firefox, safari, etc.)",
   updateEnv: (env) => {
     env.target = "modern";
   }
 });
 
-executor.execute((commandName, env) => {
+program.execute((commandName, env) => {
 
   if (commandName === "help") {
     console.log("\nAi webdev".bold);
