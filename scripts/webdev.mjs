@@ -36,18 +36,17 @@ const commands = {
 
     // hot reload
     // do this for all entrypoints?
-    // config.entry.app.unshift(
-    //   `webpack-dev-server/client?${url}`,
-    //   "webpack/hot/dev-server"
-    // );
-    console.log("ENTRY", config.entry.app);
+    config.entry.webcomponents.unshift(
+      `webpack-dev-server/client?${url}`,
+      "webpack/hot/dev-server"
+    );
     config.plugins.push(new webpack.HotModuleReplacementPlugin({
       multiStep : false
     }));
 
     const compiler = webpack(config);
     const server = new WebpackDevServer(compiler, Object.assign({
-      quiet: true,
+      quiet: false,
       hot: true
     }, config.devServer));
    

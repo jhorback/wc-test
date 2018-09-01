@@ -21,7 +21,8 @@ export default (env = {}) => {
       port: 3024
     },    
     entry: {
-      app: envh.entry(["./src/wc-test-app/wc-test-app.js"]),
+      webcomponents: envh.webComponentsEntry,
+      app: ["./src/wc-test-app/wc-test-app.js"],
     },
     
     output: {
@@ -86,7 +87,7 @@ export default (env = {}) => {
       plugins.htmlWebpackPlugin({
         template: resolvePath("./src/index.html"),
         filename: resolvePath(`${envh.targetBuildDir}index.html`),
-        chunks: ["app"]
+        chunks: ["webcomponents", "app"]
       }),
       plugins.copyWebpackPlugin([{
         from: resolvePath(

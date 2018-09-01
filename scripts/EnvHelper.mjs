@@ -10,7 +10,6 @@
 export class EnvHelper {
     constructor(env) {
         this.env = env;
-        this.baseScripts = getBaseScripts(this);
     }
 
     get description() {
@@ -63,8 +62,8 @@ export class EnvHelper {
         return (this.isIe || this.isProdMode) ? "source-map" : "eval-source-map";
     }
 
-    entry(entry) {
-        return entry ? this.baseScripts.concat(entry) : [...this.baseScripts];
+    get webComponentsEntry() {
+        return getBaseScripts(this);
     }
 }
 
@@ -76,11 +75,6 @@ export class EnvHelper {
  * Include babel-polyfill only in the browser(s) that need it.
  * Cannot do this until the webcomponents-loader.js script is fixed
  * to allow window.WebComponents.root.
- * 
- * usage syntax:
- * entry: {
- *  app: envh.entry(["script"]);
- * }
  */
 function getBaseScripts(envh) {
     let baseScripts = [];
