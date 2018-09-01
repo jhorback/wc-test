@@ -64,8 +64,9 @@ program.addCommand("serve", {
     const compiler = getCompiler({
       args: env,
       config,
-      done: () => {
-          console.log(doneMessage || "Server not started".red);
+      done: (compilation) => {
+        console.log(doneMessage || "Server not started".red);
+        doneMessage = "Done compiling".green;
       }
     });
 
@@ -172,7 +173,7 @@ function getCompiler({
     class DoneCompilerHook {
       apply(compiler) {
         compiler.hooks.done.tap("DoneCompilerHook", compilation => {
-          done();
+          done(compilation);
         });
       }
     }  
