@@ -8,6 +8,7 @@ export class CommandExecutor {
       this.flags = {};
       this.env = defaultEnv || {};
       this.env._ = [];
+      this.addHelpCommand();
     }
   
     addCommand(name, {help, execute, updateEnv = null}) {
@@ -59,7 +60,7 @@ export class CommandExecutor {
         this.flags[`-${flag}`] = option;
       }
   
-      if (defaultValue) {
+      if (defaultValue !== null) {
         this.env[name] = defaultValue;
       }
     }

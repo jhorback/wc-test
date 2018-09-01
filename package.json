@@ -43,7 +43,6 @@
     "node-watch": "^0.5.8",
     "postcss-cli": "^5.0.0",
     "postcss-preset-env": "^5.1.0",
-    "progress-webpack-plugin": "^0.0.20",
     "webpack": "^4.16.3",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.5",

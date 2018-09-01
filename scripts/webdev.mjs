@@ -1,23 +1,27 @@
 import "colors";
 import webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
-import progress from 'progress-webpack-plugin';
 import { CommandExecutor } from './CommandExecutor.mjs';
 import { EnvHelper } from './EnvHelper.mjs';
 import webpackConfig from './webpack.config.mjs';
 
+const program = new CommandExecutor({
+  target: "chrome"
+});
 
-const program = new CommandExecutor({target: "chrome"});
-program.addHelpCommand();
 
 program.addCommand("build", {
   help: "Builds the application for chrome in production mode",
   execute: (env) => {
-    const compiler = getCompiler(env);
+    const compiler = getCompiler({
+      args: env
+    });
+    
     compiler.run((err, stats) => {
       if (err) {
         throw err
       }
+      // can do this before done message ?
       if (env.verbose) {
         process.stdout.write(stats.toString({
           colors: true,
@@ -39,11 +43,13 @@ program.addCommand("serve", {
   },
 
   execute: (env) => {
-    console.log("Starting dev server...".green);
 
     const config = webpackConfig(env);
     const port = config.devServer.port;
     const url = `http://localhost:${port}/`;
+    let doneMessage = "";
+    console.log(`Starting dev server...`.green);
+
 
     // hot reload
     // do this for all entrypoints?
@@ -55,14 +61,21 @@ program.addCommand("serve", {
       multiStep : false
     }));
 
-    const compiler = getCompiler(env);
+    const compiler = getCompiler({
+      args: env,
+      config,
+      done: () => {
+          console.log(doneMessage || "Server not started".red);
+      }
+    });
+
     const server = new WebpackDevServer(compiler, Object.assign({
       quiet: !env.verbose,
       hot: true
     }, config.devServer));
    
     server.listen(port, "localhost", () => {
-      console.log(`Server is listening on: ${url}`.green);
+      doneMessage = `Server is listening on: ${url}`.green;
     });
   }
 })
@@ -143,16 +156,33 @@ function alphaNumericSort (a, b) {
 }
 
 
-function getCompiler(args, config) {
+function getCompiler({
+  args,
+  config = null,
+  done = null
+}) {
   config = config || webpackConfig(args);
-  config.plugins.push(new progress());
+  // the webpack.ProgressPlugin has profile (times per step) info
+  // but the output is wierd
+  config.plugins.push(new webpack.ProgressPlugin({
+    profile: args.verbose
+  }));
+
+  if (done) {
+    class DoneCompilerHook {
+      apply(compiler) {
+        compiler.hooks.done.tap("DoneCompilerHook", compilation => {
+          done();
+        });
+      }
+    }  
+    config.plugins.push(new DoneCompilerHook());
+  }
+  
   const compiler = webpack(config);
+ 
   return compiler;
 }
-
-
-
-
 
 
 
