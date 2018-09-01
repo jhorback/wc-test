@@ -1,4 +1,7 @@
 import {LitElement, html} from '@polymer/lit-element';
+import '@polymer/paper-button';
+import "@polymer/app-layout/app-header/app-header";
+import "@polymer/app-layout/app-toolbar/app-toolbar";
 
 
 //class WcTestApp extends HTMLElement {
@@ -21,7 +24,19 @@ class WcTestApp extends LitElement {
         example3Text
     }) {
         return html`
-            Hello WC-TEST ! OH YEAH. NOW!
+            <app-header>
+                <app-toolbar>
+                    <div main-title>WC-TEST</div>
+                </app-toolbar>
+                <app-toolbar class="bottom">TOOLBAR</app-toolbar>
+            </app-header>
+            <div style="padding:2em">
+                Hello WC-TEST ! OH YEAH. NOW!
+                <br>
+                <paper-button>Hello</paper-button>
+                <br>
+                <slot></slot>
+            </div>
         `;
     }
 }
