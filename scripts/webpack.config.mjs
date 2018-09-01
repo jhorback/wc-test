@@ -11,8 +11,6 @@ Environment flags:
 export default (env = {}) => {
 
   const envh = new EnvHelper(env);
-  console.log(envh.description);
-
   const config = {
     mode: envh.mode,
     devtool: envh.devtool,
@@ -77,7 +75,7 @@ export default (env = {}) => {
     },
 
     plugins: [
-      plugins.cleanWebpackPlugin([envh.targetBuildDir]),
+      plugins.cleanWebpackPlugin([envh.targetBuildDir], {verbose: envh.verbose}),
       // new HtmlWebpackPlugin({
       //   template: path.resolve(__dirname, "src/index.html"),
       //   filename: path.resolve(__dirname,  `${targetBuildDir}index.html`),

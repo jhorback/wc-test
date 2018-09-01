@@ -62,6 +62,10 @@ export class EnvHelper {
         return (this.isIe || this.isProdMode) ? "source-map" : "eval-source-map";
     }
 
+    get verbose() {
+        return this.env.verbose;
+    }
+
     get webComponentsEntry() {
         return getBaseScripts(this);
     }
