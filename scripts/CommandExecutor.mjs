@@ -67,10 +67,12 @@ export class CommandExecutor {
   
     execute(beforeExecute) {
       const [,, commandName, ...args] = process.argv;
-      const command = this.commands[commandName];
+      let command = this.commands[commandName];
   
       if (!command) {
-        console.log(`webdev command ${commandName} is not supported`.red);
+        console.log(`\nCommand ${commandName || ""} is not supported`.red);
+        command = this.commands.help;
+        beforeExecute = null;
       }
       
       command.updateEnv && command.updateEnv(this.env);

@@ -4,10 +4,10 @@
   "license": "0BSD",
   "scripts": {
     "start": "concurrently --kill-others \"yarn watch\" \"yarn serve\"",
-    "serve": "webpack-dev-server --env.isDevServer",
+    "serve": "webdev serve",
     "watch": "yarn css --watch",
-    "build": "webpack",
-    "css": "node --experimental-modules scripts/css.mjs",
+    "build": "yarn webdev build",
+    "css": "node --experimental-modules scripts/scssjs.mjs",
     "webdev": "node --experimental-modules scripts/webdev.mjs"
   },
   "dependencies": {
