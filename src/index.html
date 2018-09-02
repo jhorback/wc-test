@@ -3,9 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-    <title>WC TEST</title>      
+    <title>WC TEST</title>
+        
+
   </head>
   <body>
-    <wc-test-app>SLOT CONTENT</wc-test-app>    
+    <script>
+        window.loadEntry("wc-test-app").then(function () {
+          var el = document.createElement("wc-test-app");
+          document.body.appendChild(el);
+        });
+    </script>
   </body>
 </html>

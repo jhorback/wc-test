@@ -65,6 +65,7 @@ program.addCommand("serve", {
       args: env,
       config,
       done: (compilation) => {
+        //const chunks = compilation.getStats(); //.getStats().toJSON({chunks:true}).chunks;
         console.log(doneMessage || "Server not started".red);
         doneMessage = "Done compiling".green;
       }
@@ -163,8 +164,6 @@ function getCompiler({
   done = null
 }) {
   config = config || webpackConfig(args);
-  // the webpack.ProgressPlugin has profile (times per step) info
-  // but the output is wierd
   config.plugins.push(new webpack.ProgressPlugin({
     profile: args.verbose
   }));

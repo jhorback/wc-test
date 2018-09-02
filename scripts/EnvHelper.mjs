@@ -21,8 +21,10 @@ export class EnvHelper {
     }
 
     get mode() {
-        return this.env.mode || 
-            this.isDevServer ? "development" : "production"
+        if (this.env.mode) {
+            return this.env.mode;
+        }
+        return this.isDevServer ? "development" : "production";
     }
 
     /** @return {boolean} true if running the dev server */

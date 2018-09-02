@@ -19,22 +19,27 @@ export default (env = {}) => {
       port: 3024
     },    
     entry: {
-      webcomponents: envh.webComponentsEntry,
-      app: ["./src/wc-test-app/wc-test-app.js"],
+      "webcomponents": envh.webComponentsEntry
+      //"wc-test-app": ["./src/wc-test-app/wc-test-app.js"]
+      //"wc-test2-app": ["./src/wc-test2-app/wc-test2-app.js"]
     },
     
     output: {
-      filename: "[name].bundle.js?[hash]", // could put hash here
+      // cannot use chunkhash in the dev server
+      filename: `[name].bundle.js?[${envh.isDevServer ? "hash" : "chunkhash"}]`,
       path: resolvePath(envh.targetBuildDir),
       publicPath: "/"
     },
     
-    // caused an inssue with paper-card impor?
-    // optimization: {
-    //   splitChunks: {
-    //     chunks: "all"
-    //   }
-    // },
+    optimization: {
+      splitChunks: {
+        chunks: "all"
+      }
+    },
+
+    performance: {
+      hints: false
+    },
     
     resolve: {
       modules: [resolvePath("node_modules")]
@@ -67,7 +72,7 @@ export default (env = {}) => {
             plugins: [
               //"transform-class-properties",
               //"transform-runtime"
-            //  "syntax-dynamic-import"
+              "syntax-dynamic-import"
             ]
           }
         }
@@ -75,7 +80,11 @@ export default (env = {}) => {
     },
 
     plugins: [
-      plugins.cleanWebpackPlugin([envh.targetBuildDir], {verbose: envh.verbose}),
+      plugins.cleanWebpackPlugin(
+        [envh.targetBuildDir], {
+        root: resolvePath("."),
+        verbose: envh.verbose
+      }),
       // new HtmlWebpackPlugin({
       //   template: path.resolve(__dirname, "src/index.html"),
       //   filename: path.resolve(__dirname,  `${targetBuildDir}index.html`),
@@ -85,7 +94,8 @@ export default (env = {}) => {
       plugins.htmlWebpackPlugin({
         template: resolvePath("./src/index.html"),
         filename: resolvePath(`${envh.targetBuildDir}index.html`),
-        chunks: ["webcomponents", "app"]
+        //chunks: ["webcomponents", "vendors~wc-test-app~wc-test2-app", "wc-test-app"],
+        inject: "head"
       }),
       plugins.copyWebpackPlugin([{
         from: resolvePath(
@@ -105,6 +115,6 @@ export default (env = {}) => {
 
 
 function resolvePath(pathToResolve) {
-  const dirName = path.resolve();
+  const dirName = process.cwd();
   return path.resolve(dirName,  pathToResolve);
 }

@@ -2,10 +2,11 @@ import {LitElement, html} from '@polymer/lit-element';
 import '@polymer/paper-button';
 import "@polymer/app-layout/app-header/app-header";
 import "@polymer/app-layout/app-toolbar/app-toolbar";
+import "@polymer/paper-card/paper-card"
 
 
 //class WcTestApp extends HTMLElement {
-class WcTestApp extends LitElement {
+class WcTest2App extends LitElement {
     static get properties() {
         return {
             example1Text: String,
@@ -26,25 +27,17 @@ class WcTestApp extends LitElement {
         return html`
             <app-header>
                 <app-toolbar>
-                    <div main-title>WC-TEST</div>
+                    <div main-title>WC-TEST2</div>
                 </app-toolbar>
                 <app-toolbar class="bottom">TOOLBAR</app-toolbar>
             </app-header>
             <div style="padding:2em">
-                Hello WC-TEST ! OH YEAH. NOW!
-                <br>
-                <paper-button on-click=${this.clickHello}>Hello</paper-button>
-                <br>
-                <slot></slot>
+                <paper-card>
+                    <paper-button>Hello TEST 2</paper-button>
+                </paper-card>
             </div>
         `;
     }
-
-    async clickHello() {
-        window.loadEntry("wc-test2-app");
-    }
 }
 
-customElements.define('wc-test-app', WcTestApp);
-
-
+customElements.define('wc-test2-app', WcTest2App);
