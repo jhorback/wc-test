@@ -1,7 +1,3 @@
-// @ts-nocheck
-window.WebComponents = window.WebComponents || {};
-window.WebComponents.root = './node_modules/@webcomponents/webcomponentsjs/';
-
 /*
     This file should be separate and generated.
     Production mode would only output production elements.

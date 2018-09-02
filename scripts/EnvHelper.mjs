@@ -88,20 +88,19 @@ function getBaseScripts(envh) {
     if (envh.isIe) {
         baseScripts = [
             "babel-polyfill",
-            "./src/WebComponentsRoot.js",
-            "./tmp/webcomponents-loader.js"
-            //"./node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"
-            //"./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"
+            "./src/webcomponents.root.js",
+            "./src/window.loadEntry.js",
+            "./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"
         ];
     } else if (envh.isModern) {
         baseScripts = [
-            "./src/WebComponentsRoot.js",
-            "./tmp/webcomponents-loader.js"
-            //"./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"
+            "./src/webcomponents.root.js",
+            "./src/window.loadEntry.js",
+            "./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"
         ];
     } else {
         baseScripts = [
-            "./src/WebComponentsRoot.js"
+            "./src/window.loadEntry.js"
         ];
     }
 
